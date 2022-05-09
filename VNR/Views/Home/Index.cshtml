@@ -1,0 +1,120 @@
+﻿@model List<VNR.Dto.KhoaHoc.KhoaHocDto>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<link href="~/css/Index.css" rel="stylesheet" />
+
+<div class="text-center">
+    <div class="container row">
+        <div class="col-8">
+            <div class="shadow-lg p-3 mb-5 bg-white rounded">
+                <p class="text-left mb-0 head-text">
+                    <b id="khoa-hoc-lbl"></b>
+                </p>
+                <hr class="w-100 my-1 separator-hr" />
+
+                <div class="row d-flex justify-content-between">
+                    <div class="left-list flex-fill">
+
+                    </div>
+
+                    <div class="separator-middle"></div>
+
+                    <div class="right-list flex-fill">
+                        
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="shadow-lg p-3 mb-5 bg-white rounded">
+                <p class="text-left mb-0 head-text">
+                    <b>Khóa học</b>
+                </p>
+                <hr class="w-100 my-1 separator-hr" />
+                <ul class="text-left">
+                    @{
+                        foreach (var item in Model)
+                        {
+                            <li>
+                                <a href="javascript:void(0)" class="item-khoa-hoc" data-id="@item.Id">@item.TenKhoaHoc</a>
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const khoaHoc = {
+        renderMonHoc: ({ monHocs, tenKhoaHoc }) => {
+            const length = monHocs.length
+            const ulLeft = $("<ol/>")
+            const ulRight = $("<ol/>")
+
+            ulLeft.css('list-style-type', 'decimal')
+            ulRight.css('list-style-type', 'decimal')
+            ulRight.attr('start', length / 2 + 1)
+
+            $('#khoa-hoc-lbl').text(`Khóa học: ${tenKhoaHoc}`)
+
+            monHocs.forEach(({ tenMonHoc }, i) => {
+                const li = $('<li/>')
+
+                li.text(tenMonHoc)
+                li.addClass('text-left')
+
+                if (i < length / 2) {
+                    ulLeft.append(li)
+                } else {
+                    ulRight.append(li)
+                }
+            })
+
+            $('.left-list').empty()
+            $('.right-list').empty()
+            $('.left-list').append(ulLeft)
+            $('.right-list').append(ulRight)
+
+            if (length < 2) {
+                $('.right-list').addClass('d-none')
+                $('.separator-middle').addClass('d-none')
+            } else {
+                $('.right-list').removeClass('d-none')
+                $('.separator-middle').removeClass('d-none')
+            }
+
+        },
+        renderMonHocByKhoaHocId: (khoaHocId) => {
+            $.ajax({
+                url: `home/GetMonHocByKhoaHocId/${khoaHocId}`,
+                type: 'GET',
+                success: khoaHoc.renderMonHoc
+            })
+        },
+        initItemClicked: () => {
+            $('body').on('click', '.item-khoa-hoc', function () {
+                const khoaHocId = $(this).data('id')
+
+                khoaHoc.renderMonHocByKhoaHocId(khoaHocId)
+            })
+        },
+        initMonHocList: () => {
+            // Render môn học theo Khóa học đầu tiên
+            const firstEle = $('.item-khoa-hoc')[0]
+            const firstId = $(firstEle).data('id')
+
+            khoaHoc.renderMonHocByKhoaHocId(firstId)
+        }
+    }
+
+    $(document).ready(function () {
+        khoaHoc.initItemClicked();
+        khoaHoc.initMonHocList();
+    });
+</script>

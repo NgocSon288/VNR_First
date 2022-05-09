@@ -1,0 +1,17 @@
+﻿.head-text {
+    font-size: 30px
+}
+
+.separator-hr {
+    height: 2px;
+    background-color: rgb(223,255,144);
+}
+
+.separator-middle{
+    width: 2px;
+    background-color: gray;
+}
+
+ul, ol {
+    margin-bottom: 0;
+}
